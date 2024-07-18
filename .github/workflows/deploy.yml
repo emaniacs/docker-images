@@ -22,7 +22,12 @@ jobs:
         set -x
         # example tags refs/tags/zalando-pgbouncer.1
         # get the last part for tags and register into IMAGE_NAME and IMAGE_VERSION
-        echo ${GITHUB_REF} | awk -F/ '{print $NF}' | IFS='.' read -r imagename imageversion
+        ## below line not work
+        #echo ${GITHUB_REF} | awk -F/ '{print $NF}' | IFS='.' read -r imagename imageversion
+
+        tags=$(echo ${GITHUB_REF} | awk -F/ '{print $NF}')
+        imagename=$(cut -d. -f1 <<<"$tags")
+        imageversion=$(cut -d. -f2- <<<"$tags")
 
         echo "IMAGE_NAME=$imagename, IMAGE_VERSION=$imageversion"
 
