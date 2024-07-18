@@ -48,7 +48,7 @@ jobs:
         cd $IMAGE_NAME
 
         ## set label for the image
-        echo "LABEL image_path='https://github.com/${GITHUB_REPOSITORY}/$IMAGE_NAME'"
+        echo "LABEL image_path='https://github.com/${GITHUB_REPOSITORY}/$IMAGE_NAME'" >> Dockerfile
 
         docker build --tag ghcr.io/${{ github.actor }}/$IMAGE_NAME:$IMAGE_VERSION .
         docker push ghcr.io/${{ github.actor }}/$IMAGE_NAME:$IMAGE_VERSION
