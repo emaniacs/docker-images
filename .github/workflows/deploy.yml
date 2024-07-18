@@ -19,6 +19,7 @@ jobs:
 
     - name: Set variable
       run: |
+        set -x
         # example tags refs/tags/zalando-pgbouncer.1
         # get the last part for tags and register into IMAGE_NAME and IMAGE_VERSION
         echo ${GITHUB_REF} | awk -F/ '{print $NF}' | IFS='.' read -r IMAGE_NAME IMAGE_VERSION
