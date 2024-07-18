@@ -1,0 +1,43 @@
+name: Build the image
+
+on:
+  push:
+    tags:
+      - '**'
+
+env:
+  IMAGE_NAME: ''
+  IMAGE_VERSION: ''
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set variable
+      run: |
+        echo ${GITHUB_REF}
+        echo 'u' >> $GITHUB_ENV
+        echo version >> $GITHUB_ENV
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{github.actor}}
+        password: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Build image
+      run: |
+        set -exu
+
+        cd $IMAGE_NAME
+
+        docker build --tag ghcr.io/${{ github.actor }}/$IMAGE_NAME:$IMAGE_VERSION .
+        docker push ghcr.io/${{ github.actor }}/$IMAGE_NAME:$IMAGE_VERSION
+
+        docker tag ghcr.io/${{ github.actor }}/$IMAGE_NAME:$IMAGE_VERSION ghcr.io/${{ github.actor }}/$IMAGE_NAME:latest
+        docker push ghcr.io/${{ github.actor }}/$IMAGE_NAME:latest
