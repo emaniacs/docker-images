@@ -22,10 +22,12 @@ jobs:
         set -x
         # example tags refs/tags/zalando-pgbouncer.1
         # get the last part for tags and register into IMAGE_NAME and IMAGE_VERSION
-        echo ${GITHUB_REF} | awk -F/ '{print $NF}' | IFS='.' read -r IMAGE_NAME IMAGE_VERSION
+        echo ${GITHUB_REF} | awk -F/ '{print $NF}' | IFS='.' read -r imagename imageversion
 
-        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-        echo "IMAGE_VERSION=$IMAGE_VERSION" >> $GITHUB_ENV
+        echo "IMAGE_NAME=$imagename, IMAGE_VERSION=$imageversion"
+
+        echo "IMAGE_NAME=$imagename" >> $GITHUB_ENV
+        echo "IMAGE_VERSION=$imageversion" >> $GITHUB_ENV
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v1
