@@ -1,0 +1,60 @@
+## kubectl patch statefulset <statefulset-name> --type strategic --patch-file patch.yaml
+spec:
+  template:
+    spec:
+      volumes:
+        - name: mysql-backup-percona
+          secret:
+            secretName: mysql-backup-percona
+            items:
+              - key: rclone.conf
+                path: rclone.conf
+              - key: backup.crontab
+                path: backup.crontab
+      containers:
+      - name: backup
+        image: ghcr.io/emaniacs/percona-xtrabackup-cron:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: BACKUP_PATH
+            value: /tmp/backup
+          - name: RCLONE_CONFIG_FILE
+            value: /tmp/rclone.conf
+          - name: RCLONE_BACKUP_PATH
+            value: minio:/backup/mysql
+          - name: BITNAMI_DEBUG
+            value: 'false'
+          - name: MYSQL_ROOT_PASSWORD_FILE
+            value: /opt/bitnami/mysql/secrets/mysql-root-password
+          - name: MYSQL_ENABLE_SSL
+            value: 'no'
+          - name: MYSQL_PORT
+            value: '3306'
+          - name: MYSQL_DATABASE
+            value: my_database
+        volumeMounts:
+          - name: mysql-backup-percona
+            mountPath: /tmp/rclone.conf
+            subPath: rclone.conf
+          - name: mysql-backup-percona
+            mountPath: /etc/cron.d/backup.crontab
+            subPath: backup.crontab
+          - name: data
+            mountPath: /bitnami/mysql
+          - name: empty-dir
+            mountPath: /tmp
+            subPath: tmp-dir
+          - name: mysql-credentials
+            mountPath: /opt/bitnami/mysql/secrets/
+          - name: empty-dir
+            mountPath: /opt/bitnami/mysql/conf
+            subPath: app-conf-dir
+          - name: empty-dir
+            mountPath: /opt/bitnami/mysql/tmp
+            subPath: app-tmp-dir
+          - name: empty-dir
+            mountPath: /opt/bitnami/mysql/logs
+            subPath: app-logs-dir
+          - name: config
+            mountPath: /opt/bitnami/mysql/conf/my.cnf
+            subPath: my.cnf
