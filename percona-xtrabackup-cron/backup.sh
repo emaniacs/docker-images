@@ -26,8 +26,11 @@ EOF
     exit 0
 fi
 
-BACKUP_PATH=/tmp/backup
-mkdir -p $BACKUP_PATH
+if test -z "$BACKUP_PATH"
+then
+    BACKUP_PATH=/tmp/backup
+fi
+mkdir -p "$BACKUP_PATH"
 
 ## this value used by bitnami to set password, we export
 if test -n "$MYSQL_ROOT_PASSWORD_FILE"
