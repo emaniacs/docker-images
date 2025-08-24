@@ -1,5 +1,14 @@
 #!/bin/sh
 
+
+## we need to read all env variable set my manifest
+if test ! -f /tmp/backup.environ
+then
+    tr '\0' '\n' < /proc/1/environ |grep 'BACKUP_\|MYSQL_\|RCLONE_' > /tmp/backup.sh.environ
+fi
+
+. /tmp/backup.sh.environ
+
 ## exit on error
 set -e
 
