@@ -2,6 +2,8 @@
 
 
 ## we need to read all env variable set my manifest
+## by default crontab will not load the env unless we set it, so its better
+## load manually
 if test ! -f /tmp/backup.environ
 then
     tr '\0' '\n' < /proc/1/environ |grep 'BACKUP_\|MYSQL_\|RCLONE_' > /tmp/backup.sh.environ
@@ -92,7 +94,7 @@ then
     RCLONE_BACKUP=y
     log "RCLONE_CONFIG_FILE and RCLONE_BACKUP_PATH exist, copy the last backup using rclone"
     log rclone --config "$RCLONE_CONFIG_FILE" copyto -v "$OUTPUT_DIR/" "$RCLONE_BACKUP_PATH/$BACKUP_NAME"
-    rclone --config "$RCLONE_CONFIG_FILE" copyto -v "$OUTPUT_DIR/" "$RCLONE_BACKUP_PATH/$BACKUP_NAME"
+    /usr/local/bin/rclone --config "$RCLONE_CONFIG_FILE" copyto -v "$OUTPUT_DIR/" "$RCLONE_BACKUP_PATH/$BACKUP_NAME"
 
     ## Remove all incrementabl backup file in the backup, but keep the directory as docs
     if test "$BACKUP_NAME" != "base"
